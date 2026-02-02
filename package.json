@@ -1,0 +1,19 @@
+{
+  "name": "gold-price-monitor-telegram-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "gold",
+    "price",
+    "alert"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
