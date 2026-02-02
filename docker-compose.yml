@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: goldbot_mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: goldbot
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - goldbot_network
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: goldbot_mongo_express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+    depends_on:
+      - mongodb
+    networks:
+      - goldbot_network
+
+volumes:
+  mongodb_data:
+
+networks:
+  goldbot_network:
+    driver: bridge
