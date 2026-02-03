@@ -146,5 +146,39 @@ Untuk mengubah threshold, gunakan:
 
     await ctx.reply(`✅ Threshold kenaikan diset ke ${value}%`);
   });
+
+  // History command
+  bot.command("history", async (ctx) => {
+    const history = await priceHistoryService.getRecentPriceHistory(5);
+
+    if (history.length === 0) {
+      return ctx.reply("Belum ada data history.");
+    }
+
+    let message = "📊 *RIWAYAT HARGA (5 Terakhir)*\n\n";
+
+    history.forEach((item, index) => {
+      message += `${index + 1}. $${item.price.toFixed(2)} - ${item.timestamp.toLocaleString("id-ID")}\n`;
+    });
+
+    await ctx.reply(message, { parse_mode: "Markdown" });
+    await userService.updateUserSettings(ctx.from.id, {});
+  });
+
+  // Stats command
+  bot.command("stats", async (ctx) => {
+    const { totalUsers, activeUsers } = await userService.getUserStats();
+    const totalPrices = await priceHistoryService.getTotalRecords();
+
+    const message = `
+📊 *STATISTIK BOT*
+
+👥 Total Users: ${totalUsers}
+✅ Active Alerts: ${activeUsers}
+📈 Price Records: ${totalPrices}
+    `.trim();
+
+    await ctx.reply(message, { parse_mode: "Markdown" });
+  });
 }
 module.exports = registerCommands;
