@@ -74,6 +74,77 @@ ${changeEmoji} Perubahan: ${goldData.change >= 0 ? "+" : ""}$${goldData.change.t
 
     await ctx.reply(helpMessage, { parse_mode: "Markdown" });
   });
-}
 
+  // Alert toggle command
+  bot.command("alert", async (ctx) => {
+    const user = await userService.getUser(ctx.from.id);
+
+    if (!user) {
+      await userService.saveUser(ctx.from.id, ctx.chat.id);
+      return ctx.reply("User belum terdaftar. Gunakan /start terlebih dahulu.");
+    }
+
+    const newStatus = !user.alertEnabled;
+
+    await userService.updateUserSettings(ctx.from.id, {
+      alertEnabled: newStatus,
+    });
+
+    const status = newStatus ? "✅ AKTIF" : "❌ NONAKTIF";
+    await ctx.reply(`Alert sekarang ${status}`);
+  });
+
+  // Settings command
+  bot.command("settings", async (ctx) => {
+    const user = await userService.getUser(ctx.from.id);
+
+    if (!user) {
+      return ctx.reply("Gunakan /start terlebih dahulu.");
+    }
+
+    const message = `
+⚙️ *PENGATURAN ALERT*
+
+Status: ${user.alertEnabled ? "✅ Aktif" : "❌ Nonaktif"}
+📉 Threshold Penurunan: ${user.priceDropThreshold}%
+📈 Threshold Kenaikan: ${user.priceRiseThreshold}%
+
+Untuk mengubah threshold, gunakan:
+/setdrop <persen> - contoh: /setdrop 1.5
+/setrise <persen> - contoh: /setrise 2.0
+    `.trim();
+
+    await ctx.reply(message, { parse_mode: "Markdown" });
+  });
+
+  // Set drop threshold
+  bot.command("setdrop", async (ctx) => {
+    const value = parseFloat(ctx.message.text.split(" ")[1]);
+
+    if (isNaN(value) || value <= 0) {
+      return ctx.reply("❌ Masukkan angka valid. Contoh: /setdrop 1.5");
+    }
+
+    await userService.updateUserSettings(ctx.from.id, {
+      priceDropThreshold: value,
+    });
+
+    await ctx.reply(`✅ Threshold penurunan diset ke ${value}%`);
+  });
+
+  // Set rise threshold
+  bot.command("setrise", async (ctx) => {
+    const value = parseFloat(ctx.message.text.split(" ")[1]);
+
+    if (isNaN(value) || value <= 0) {
+      return ctx.reply("❌ Masukkan angka valid. Contoh: /setrise 2.0");
+    }
+
+    await userService.updateUserSettings(ctx.from.id, {
+      priceRiseThreshold: value,
+    });
+
+    await ctx.reply(`✅ Threshold kenaikan diset ke ${value}%`);
+  });
+}
 module.exports = registerCommands;
