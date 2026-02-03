@@ -1,4 +1,4 @@
-const { User } = require("../models/User");
+const User = require("../models/User");
 
 const saveUser = async (userId, chatId, data = {}) => {
   try {

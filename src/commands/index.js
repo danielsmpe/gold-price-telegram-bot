@@ -40,7 +40,7 @@ Bot ini akan memberikan notifikasi real-time saat harga emas berubah signifikan.
     const message = `
 💰 *HARGA EMAS HARI INI*
 
-💵 Harga per Ounce: *$${goldData.price.toFixed(2)}*
+💵 Harga per Ons: *$${goldData.price.toFixed(2)}*
 ⚖️ Harga per Gram (24K): *$${goldData.priceGram.toFixed(2)}*
 
 ${changeEmoji} Perubahan: ${goldData.change >= 0 ? "+" : ""}$${goldData.change.toFixed(2)} (${goldData.changePercent >= 0 ? "+" : ""}${goldData.changePercent.toFixed(2)}%)

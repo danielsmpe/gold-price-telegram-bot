@@ -11,6 +11,7 @@ const fetchGoldPrice = async () => {
         "Content-Type": "application/json",
       },
     });
+    console.log("Gold price data fetched:", response.data);
     return {
       price: response.data.price,
       priceGram: response.data.price_gram_24k,
