@@ -1,3 +1,5 @@
+const { formatRupiah, formatDate } = require("../utils/formatters");
+
 class AlertService {
   constructor(bot) {
     this.bot = bot;
@@ -10,16 +12,16 @@ class AlertService {
     const direction = type === "drop" ? "turun" : "naik";
 
     const message = `
-${emoji} *GOLD PRICE ALERT!*
+${emoji} *ALERT HARGA EMAS!*
 
 Harga emas ${direction} sebesar *${Math.abs(changePercent).toFixed(2)}%*
 
-💰 Harga Sebelum: $${oldPrice.toFixed(2)}
-💰 Harga Sekarang: $${newPrice.toFixed(2)}
-📊 Perubahan: $${(newPrice - oldPrice).toFixed(2)}
+💰 Harga Sebelum: ${formatRupiah(oldPrice)}
+💰 Harga Sekarang: ${formatRupiah(newPrice)}
+📊 Perubahan: ${formatRupiah(newPrice - oldPrice)}
 
-⚖️ Per Gram (24K): $${goldData.priceGram.toFixed(2)}
-🕐 Waktu: ${goldData.timestamp.toLocaleString("id-ID")}
+⚖️ Per Gram (24K): ${formatRupiah(goldData.priceGram)}
+🕐 Waktu: ${formatDate(goldData.timestamp)}
     `.trim();
 
     try {

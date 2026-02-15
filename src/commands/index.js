@@ -1,6 +1,8 @@
 const goldApi = require("../services/goldApi");
 const userService = require("../services/userService");
 const priceHistoryService = require("../services/priceHistoryService");
+const { formatRupiah, formatDate } = require("../utils/formatters");
+const AlertService = require("../services/alertService");
 
 function registerCommands(bot) {
   // Start command
@@ -40,16 +42,15 @@ Bot ini akan memberikan notifikasi real-time saat harga emas berubah signifikan.
     const message = `
 💰 *HARGA EMAS HARI INI*
 
-💵 Harga per Ons: *$${goldData.price.toFixed(2)}*
-⚖️ Harga per Gram (24K): *$${goldData.priceGram.toFixed(2)}*
+💵 Harga per Ons: *${formatRupiah(goldData.pricePerOunce)}*
+⚖️ Harga per Gram (24K): *${formatRupiah(goldData.priceGram)}*
 
-${changeEmoji} Perubahan: ${goldData.change >= 0 ? "+" : ""}$${goldData.change.toFixed(2)} (${goldData.changePercent >= 0 ? "+" : ""}${goldData.changePercent.toFixed(2)}%)
+${changeEmoji} Perubahan: ${goldData.changeGram >= 0 ? "+" : ""}${formatRupiah(goldData.changeGram)} (${goldData.changePercent >= 0 ? "+" : ""}${goldData.changePercent.toFixed(2)}%)
 
-🕐 Update: ${goldData.timestamp.toLocaleString("id-ID")}
-    `.trim();
+🕐 Update: ${formatDate(goldData.timestamp)}
+  `.trim();
 
     await ctx.reply(message, { parse_mode: "Markdown" });
-    await userService.updateUserSettings(ctx.from.id, {});
   });
 
   // Help command
@@ -179,6 +180,23 @@ Untuk mengubah threshold, gunakan:
     `.trim();
 
     await ctx.reply(message, { parse_mode: "Markdown" });
+  });
+
+  // Demo alert command (for testing)
+  const alertService = new AlertService(bot);
+  bot.command("demoalert", async (ctx) => {
+    const fakeGoldData = {
+      priceGram: 2774250,
+      timestamp: Math.floor(Date.now() / 1000),
+    };
+
+    await alertService.sendAlert(ctx.chat.id, {
+      type: "rise",
+      changePercent: 2.75,
+      oldPrice: 2700000,
+      newPrice: 2774250,
+      goldData: fakeGoldData,
+    });
   });
 }
 module.exports = registerCommands;

@@ -15,7 +15,7 @@ class MonitorService {
 
     if (!goldData) return;
 
-    const currentPrice = goldData.price;
+    const currentPrice = goldData.priceGram;
 
     // Save to history
     await priceHistoryService.savePriceHistory(goldData);
